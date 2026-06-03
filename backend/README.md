@@ -2,8 +2,7 @@
 
 ## Prerequisites
 
-- Node.js 20+
-- PostgreSQL 14+
+- Docker Desktop
 
 ## Setup
 
@@ -58,11 +57,14 @@ On first startup a seed admin is created automatically:
 
 ## API endpoints
 
-| Method | Path           | Roles        | Description          |
-|--------|----------------|--------------|----------------------|
-| POST   | /auth/login    | Public       | Returns access_token |
-| GET    | /users         | Admin, User  | List all users       |
-| GET    | /users/:id     | Admin, User  | Get user by id       |
-| POST   | /users         | Admin only   | Create user          |
-| PATCH  | /users/:id     | Admin only   | Update user          |
-| DELETE | /users/:id     | Admin only   | Delete user          |
+| Method | Path                  | Roles       | Description               |
+|--------|-----------------------|-------------|---------------------------|
+| POST   | /auth/login           | Public      | Returns access_token      |
+| POST   | /auth/forgot-password | Public      | Send password reset email |
+| GET    | /users                | Admin, User | List all users            |
+| GET    | /users/:id            | Admin, User | Get user by id            |
+| POST   | /users                | Admin only  | Create user               |
+| PATCH  | /users/me/password    | Admin, User | Change own password       |
+| PATCH  | /users/:id            | Admin only  | Update user               |
+| DELETE | /users/:id            | Admin only  | Delete user               |
+| GET    | /audit                | Admin only  | List audit logs           |
