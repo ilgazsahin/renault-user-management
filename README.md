@@ -2,6 +2,8 @@
 
 A full-stack user management application built with NestJS and Angular, containerized with Docker.
 
+DEMO VIDEO: https://drive.google.com/drive/folders/1Q7Tja9gVTdUoJB3qEAXXblN6WSSP5DQp?usp=sharing
+
 ## Tech Stack
 
 | Layer | Technology |
