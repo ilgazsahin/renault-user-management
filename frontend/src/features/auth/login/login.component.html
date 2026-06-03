@@ -1,0 +1,107 @@
+<div class="login-root">
+  <div class="login-panel-left">
+    <div class="login-brand">
+      <img src="RNO.PA.D-fef2ec73.png" alt="Renault" height="52" style="display:block;" />
+    </div>
+    <div class="left-copy">
+      <h2>{{ 'LOGIN.BRAND_COPY' | translate }}</h2>
+      <p>{{ 'LOGIN.BRAND_DESC' | translate }}</p>
+    </div>
+    <div class="left-footer">© {{ year }} {{ 'LOGIN.COPYRIGHT' | translate }}</div>
+  </div>
+
+  <div class="login-panel-right">
+    <div class="login-form-box">
+
+      <!-- ── Login view ─────────────────────────────────────── -->
+      @if (view() === 'login') {
+        <h1 class="form-title">{{ 'LOGIN.TITLE' | translate }}</h1>
+        <p class="form-subtitle">{{ 'LOGIN.SUBTITLE' | translate }}</p>
+
+        @if (errorMessage()) {
+          <div class="error-banner">{{ errorMessage() }}</div>
+        }
+
+        <form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
+          <mat-form-field appearance="outline" style="width:100%;">
+            <mat-label>{{ 'LOGIN.USERNAME' | translate }}</mat-label>
+            <input matInput formControlName="username" autocomplete="username" />
+            @if (loginForm.get('username')?.hasError('required') && loginForm.get('username')?.touched) {
+              <mat-error>{{ 'LOGIN.REQUIRED_USERNAME' | translate }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" style="width:100%; margin-top:8px;">
+            <mat-label>{{ 'LOGIN.PASSWORD' | translate }}</mat-label>
+            <input matInput type="password" formControlName="password" autocomplete="current-password" />
+            @if (loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched) {
+              <mat-error>{{ 'LOGIN.REQUIRED_PASSWORD' | translate }}</mat-error>
+            }
+          </mat-form-field>
+
+          <button type="button" class="forgot-link" (click)="showForgot()">
+            {{ 'LOGIN.FORGOT_PASSWORD' | translate }}
+          </button>
+
+          <button mat-raised-button color="primary" type="submit"
+            [disabled]="loginForm.invalid || loading()" class="login-btn">
+            @if (loading()) {
+              <mat-spinner diameter="20" style="display:inline-block;"></mat-spinner>
+            } @else {
+              {{ 'LOGIN.SUBMIT' | translate }}
+            }
+          </button>
+        </form>
+      }
+
+      <!-- ── Forgot password view ───────────────────────────── -->
+      @if (view() === 'forgot') {
+        <button type="button" class="back-link" (click)="showLogin()">
+          ← {{ 'LOGIN.BACK_TO_LOGIN' | translate }}
+        </button>
+
+        <h1 class="form-title">{{ 'LOGIN.FORGOT_TITLE' | translate }}</h1>
+        <p class="form-subtitle">{{ 'LOGIN.FORGOT_SUBTITLE' | translate }}</p>
+
+        @if (errorMessage()) {
+          <div class="error-banner">{{ errorMessage() }}</div>
+        }
+
+        <form [formGroup]="forgotForm" (ngSubmit)="onForgotSubmit()">
+          <mat-form-field appearance="outline" style="width:100%;">
+            <mat-label>{{ 'LOGIN.EMAIL' | translate }}</mat-label>
+            <input matInput type="email" formControlName="email" autocomplete="email" />
+            @if (forgotForm.get('email')?.hasError('required') && forgotForm.get('email')?.touched) {
+              <mat-error>{{ 'LOGIN.REQUIRED_EMAIL' | translate }}</mat-error>
+            }
+            @if (forgotForm.get('email')?.hasError('email') && forgotForm.get('email')?.touched) {
+              <mat-error>{{ 'LOGIN.INVALID_EMAIL' | translate }}</mat-error>
+            }
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" type="submit"
+            [disabled]="forgotForm.invalid || loading()" class="login-btn">
+            @if (loading()) {
+              <mat-spinner diameter="20" style="display:inline-block;"></mat-spinner>
+            } @else {
+              {{ 'LOGIN.FORGOT_SUBMIT' | translate }}
+            }
+          </button>
+        </form>
+      }
+
+      <!-- ── Success view ───────────────────────────────────── -->
+      @if (view() === 'forgot-success') {
+        <div class="success-box">
+          <mat-icon class="success-icon">mark_email_read</mat-icon>
+          <h2>{{ 'LOGIN.FORGOT_SUCCESS_TITLE' | translate }}</h2>
+          <p>{{ 'LOGIN.FORGOT_SUCCESS_DESC' | translate }}</p>
+          <button mat-raised-button color="primary" class="login-btn" (click)="showLogin()">
+            {{ 'LOGIN.BACK_TO_LOGIN' | translate }}
+          </button>
+        </div>
+      }
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,143 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>{{ 'AUDIT.TITLE' | translate }}</h1>
+  </div>
+
+  <!-- Row 1: performer search + date range + reset -->
+  <div class="list-toolbar">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-icon matPrefix style="color:var(--r-text-secondary); margin-right:4px;">person_search</mat-icon>
+      <mat-label>{{ 'AUDIT.FILTER_PERFORMER' | translate }}</mat-label>
+      <input matInput #performerInput (input)="onPerformedByInput($any($event.target).value)" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="date-field">
+      <mat-label>{{ 'AUDIT.DATE_FROM' | translate }}</mat-label>
+      <input matInput [matDatepicker]="fromPicker" [value]="dateFrom()" (dateChange)="onDateFromChange($event)" placeholder="MM/DD/YYYY" />
+      <mat-datepicker-toggle matIconSuffix [for]="fromPicker"></mat-datepicker-toggle>
+      <mat-datepicker #fromPicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="date-field">
+      <mat-label>{{ 'AUDIT.DATE_TO' | translate }}</mat-label>
+      <input matInput [matDatepicker]="toPicker" [value]="dateTo()" (dateChange)="onDateToChange($event)" placeholder="MM/DD/YYYY" />
+      <mat-datepicker-toggle matIconSuffix [for]="toPicker"></mat-datepicker-toggle>
+      <mat-datepicker #toPicker></mat-datepicker>
+    </mat-form-field>
+
+    @if (hasFilters()) {
+      <button mat-stroked-button class="reset-btn" (click)="resetFilters()">
+        <mat-icon>filter_alt_off</mat-icon>
+        {{ 'AUDIT.RESET_FILTERS' | translate }}
+      </button>
+    }
+  </div>
+
+  <!-- Row 2: action filter chips -->
+  <div style="margin-bottom: 20px;">
+    <div class="role-filters">
+      <button class="filter-chip" [class.active]="actionFilter() === ''" (click)="onActionFilter('')">
+        {{ 'USERS.FILTER_ALL' | translate }}
+      </button>
+      @for (action of allActions; track action) {
+        <button class="filter-chip audit-chip-{{ action }}" [class.active]="actionFilter() === action" (click)="onActionFilter(action)">
+          <mat-icon style="font-size:14px; width:14px; height:14px; vertical-align:middle; margin-right:4px;">{{ actionIcon(action) }}</mat-icon>
+          {{ actionLabel(action) }}
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="error-banner">{{ errorMessage() }}</div>
+  }
+
+  @if (loading()) {
+    <div style="display:flex; justify-content:center; padding:64px;">
+      <mat-spinner diameter="44"></mat-spinner>
+    </div>
+  } @else {
+    <mat-table [dataSource]="logs()" class="renault-table">
+
+      <ng-container matColumnDef="action">
+        <mat-header-cell *matHeaderCellDef style="max-width:220px;">{{ 'AUDIT.COL_ACTION' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let log" style="max-width:220px;">
+          <div class="audit-action">
+            <mat-icon [style.color]="actionColor(log.action)">{{ actionIcon(log.action) }}</mat-icon>
+            <span class="audit-action-label" [style.color]="actionColor(log.action)">
+              {{ actionLabel(log.action) }}
+            </span>
+          </div>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="performedBy">
+        <mat-header-cell *matHeaderCellDef style="max-width:160px;">{{ 'AUDIT.COL_PERFORMED_BY' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let log" style="max-width:160px;">
+          <span class="audit-username">{{ log.performedByUsername }}</span>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="target">
+        <mat-header-cell *matHeaderCellDef style="max-width:160px;">{{ 'AUDIT.COL_TARGET' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let log" style="max-width:160px;">
+          <span class="audit-username">{{ log.targetUsername ?? '—' }}</span>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="metadata">
+        <mat-header-cell *matHeaderCellDef>{{ 'AUDIT.COL_DETAILS' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let log" style="color:var(--r-text-secondary); font-size:13px;">
+          {{ metadataSummary(log) }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="createdAt">
+        <mat-header-cell *matHeaderCellDef style="max-width:200px; justify-content:flex-end;">
+          <button class="sort-header" (click)="toggleSortOrder()">
+            {{ 'AUDIT.COL_DATE' | translate }}
+            <mat-icon class="sort-icon active">
+              {{ sortOrder() === 'DESC' ? 'arrow_downward' : 'arrow_upward' }}
+            </mat-icon>
+          </button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let log" style="max-width:200px; justify-content:flex-end; color:var(--r-text-secondary); font-size:13px;">
+          {{ log.createdAt | date:'dd MMM yyyy, HH:mm' }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef style="max-width:64px; justify-content:center;"></mat-header-cell>
+        <mat-cell *matCellDef="let log" style="max-width:64px; justify-content:center;">
+          <button mat-icon-button (click)="openDetail(log)" [matTooltip]="'AUDIT.VIEW_DETAIL' | translate">
+            <mat-icon style="color:var(--r-icon);">visibility</mat-icon>
+          </button>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+
+    @if (logs().length === 0) {
+      <p style="text-align:center;color:#9E9E9E;padding:40px;background:var(--r-surface);margin:0;border:1px solid var(--r-border);border-top:none;">
+        {{ 'AUDIT.NO_LOGS' | translate }}
+      </p>
+    }
+
+    <div style="display:flex; align-items:center; justify-content:space-between; background:var(--r-surface); border:1px solid var(--r-border); border-top:none; padding:0 16px;">
+      <span style="font-size:13px; color:var(--r-text-secondary);">
+        {{ 'USERS.PAGE' | translate }} {{ page() }} {{ 'USERS.OF' | translate }} {{ totalPages() }}
+      </span>
+      <mat-paginator
+        [length]="total()"
+        [pageSize]="pageSize()"
+        [pageIndex]="page() - 1"
+        [pageSizeOptions]="[10, 20, 50]"
+        showFirstLastButtons
+        (page)="onPageChange($event)"
+        style="background:transparent;">
+      </mat-paginator>
+    </div>
+  }
+</div>

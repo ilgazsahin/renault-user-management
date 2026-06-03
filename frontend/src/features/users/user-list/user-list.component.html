@@ -1,0 +1,139 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>{{ 'USERS.TITLE' | translate }}</h1>
+    @if (isAdmin()) {
+      <button mat-raised-button color="primary" routerLink="/users/new">
+        <mat-icon>add</mat-icon>
+        {{ 'USERS.ADD' | translate }}
+      </button>
+    }
+  </div>
+
+  <!-- Search & Filters -->
+  <div class="list-toolbar">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-icon matPrefix style="color:var(--r-text-secondary); margin-right:4px;">search</mat-icon>
+      <mat-label>{{ 'USERS.SEARCH' | translate }}</mat-label>
+      <input matInput #searchInput (input)="onSearchChange($any($event.target).value)" />
+    </mat-form-field>
+
+    <div class="role-filters">
+      <button class="filter-chip" [class.active]="roleFilter() === ''" (click)="onRoleChange('')">
+        {{ 'USERS.FILTER_ALL' | translate }}
+      </button>
+      <button class="filter-chip" [class.active]="roleFilter() === 'admin'" (click)="onRoleChange('admin')">
+        {{ 'ROLES.admin' | translate }}
+      </button>
+      <button class="filter-chip" [class.active]="roleFilter() === 'user'" (click)="onRoleChange('user')">
+        {{ 'ROLES.user' | translate }}
+      </button>
+    </div>
+
+    @if (hasFilters()) {
+      <button mat-stroked-button class="reset-btn" (click)="resetFilters()">
+        <mat-icon>filter_alt_off</mat-icon>
+        {{ 'USERS.RESET_FILTERS' | translate }}
+      </button>
+    }
+  </div>
+
+  @if (errorMessage()) {
+    <div class="error-banner">{{ errorMessage() }}</div>
+  }
+
+  @if (loading()) {
+    <div style="display:flex; justify-content:center; padding:64px;">
+      <mat-spinner diameter="44"></mat-spinner>
+    </div>
+  } @else {
+    <mat-table [dataSource]="users()" class="renault-table">
+
+      <ng-container matColumnDef="fullName">
+        <mat-header-cell *matHeaderCellDef>
+          <button class="sort-header" (click)="setSortBy('fullName')">
+            {{ 'USERS.COL_NAME' | translate }}
+            <mat-icon class="sort-icon" [class.active]="sortBy() === 'fullName'">{{ sortIcon('fullName') }}</mat-icon>
+          </button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let user" style="font-weight:500;">{{ user.fullName }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="username">
+        <mat-header-cell *matHeaderCellDef>
+          <button class="sort-header" (click)="setSortBy('username')">
+            {{ 'USERS.COL_USERNAME' | translate }}
+            <mat-icon class="sort-icon" [class.active]="sortBy() === 'username'">{{ sortIcon('username') }}</mat-icon>
+          </button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let user">{{ user.username }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="email">
+        <mat-header-cell *matHeaderCellDef>{{ 'USERS.COL_EMAIL' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let user">{{ user.email }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="role">
+        <mat-header-cell *matHeaderCellDef>{{ 'USERS.COL_ROLE' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let user">
+          <span [class]="'role-badge role-' + user.role">{{ 'ROLES.' + user.role | translate }}</span>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="createdAt">
+        <mat-header-cell *matHeaderCellDef>
+          <button class="sort-header" (click)="setSortBy('createdAt')">
+            {{ 'USERS.COL_SINCE' | translate }}
+            <mat-icon class="sort-icon" [class.active]="sortBy() === 'createdAt'">{{ sortIcon('createdAt') }}</mat-icon>
+          </button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let user">{{ user.createdAt | date:'mediumDate' }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef style="justify-content:flex-end;">{{ 'USERS.COL_ACTIONS' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let user" style="justify-content:flex-end; gap:4px;">
+          <button mat-icon-button [routerLink]="['/users', user.id]"
+            [matTooltip]="'USERS.TOOLTIP_VIEW' | translate">
+            <mat-icon style="color:var(--r-icon);">visibility</mat-icon>
+          </button>
+          @if (isAdmin()) {
+            <button mat-icon-button [routerLink]="['/users', user.id, 'edit']"
+              [matTooltip]="'USERS.TOOLTIP_EDIT' | translate">
+              <mat-icon style="color:var(--r-icon);">edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="confirmDelete(user)"
+              [matTooltip]="'USERS.TOOLTIP_DELETE' | translate">
+              <mat-icon>delete</mat-icon>
+            </button>
+          }
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+
+    @if (users().length === 0) {
+      <p style="text-align:center;color:#9E9E9E;padding:40px;background:var(--r-surface);margin:0;border:1px solid var(--r-border);border-top:none;">
+        {{ 'USERS.NO_USERS' | translate }}
+      </p>
+    }
+
+    <div style="display:flex; align-items:center; justify-content:space-between; background:var(--r-surface); border:1px solid var(--r-border); border-top:none; padding:0 16px;">
+      <span style="font-size:13px; color:var(--r-text-secondary);">
+        {{ 'USERS.PAGE' | translate }} {{ page() }} {{ 'USERS.OF' | translate }} {{ totalPages() }}
+      </span>
+      <mat-paginator
+        class="renault-paginator"
+        [length]="total()"
+        [pageSize]="pageSize()"
+        [pageIndex]="page() - 1"
+        [pageSizeOptions]="[5, 10, 25, 50]"
+        showFirstLastButtons
+        (page)="onPageChange($event)"
+        style="background:transparent;">
+      </mat-paginator>
+    </div>
+  }
+</div>

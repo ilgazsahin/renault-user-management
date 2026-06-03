@@ -1,0 +1,61 @@
+<div class="page-container">
+  @if (loading()) {
+    <div style="display:flex; justify-content:center; padding:48px;">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="error-banner">{{ errorMessage() }}</div>
+  }
+
+  @if (!loading() && user(); as u) {
+    <div style="margin-bottom:24px; max-width:600px; margin-left:auto; margin-right:auto;">
+      <button mat-button routerLink="/users">
+        <mat-icon>arrow_back</mat-icon>
+        {{ 'USER_DETAIL.BACK' | translate }}
+      </button>
+    </div>
+
+    <mat-card style="max-width:600px; margin: 0 auto;">
+      <mat-card-header>
+        <mat-card-title>{{ u.fullName }}</mat-card-title>
+        <mat-card-subtitle>
+          <span [class]="'role-badge role-' + u.role">{{ 'ROLES.' + u.role | translate }}</span>
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content style="margin-top:24px;">
+        <table style="width:100%; border-collapse:collapse;">
+          <tr style="border-bottom:1px solid var(--r-border);">
+            <td style="padding:12px 0; color:var(--r-text-secondary); width:160px;">{{ 'USER_DETAIL.USERNAME' | translate }}</td>
+            <td style="padding:12px 0; font-weight:500;">{{ u.username }}</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--r-border);">
+            <td style="padding:12px 0; color:var(--r-text-secondary);">{{ 'USER_DETAIL.EMAIL' | translate }}</td>
+            <td style="padding:12px 0;">{{ u.email }}</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--r-border);">
+            <td style="padding:12px 0; color:var(--r-text-secondary);">{{ 'USER_DETAIL.ROLE' | translate }}</td>
+            <td style="padding:12px 0;">
+              <span [class]="'role-badge role-' + u.role">{{ 'ROLES.' + u.role | translate }}</span>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:12px 0; color:var(--r-text-secondary);">{{ 'USER_DETAIL.SINCE' | translate }}</td>
+            <td style="padding:12px 0;">{{ u.createdAt | date:'longDate' }}</td>
+          </tr>
+        </table>
+      </mat-card-content>
+
+      @if (isAdmin()) {
+        <mat-card-actions style="padding:16px;">
+          <button mat-raised-button color="primary" [routerLink]="['/users', u.id, 'edit']">
+            <mat-icon>edit</mat-icon>
+            {{ 'USER_DETAIL.EDIT' | translate }}
+          </button>
+        </mat-card-actions>
+      }
+    </mat-card>
+  }
+</div>

@@ -1,0 +1,480 @@
+@use '@angular/material' as mat;
+
+// ─── Angular Material themes ─────────────────────────────────────────────────
+$light-theme: mat.define-theme((
+  color: (theme-type: light, primary: mat.$azure-palette),
+  typography: (brand-family: 'Outfit', plain-family: 'Outfit'),
+  density: (scale: 0),
+));
+
+$dark-theme: mat.define-theme((
+  color: (theme-type: dark, primary: mat.$azure-palette),
+  typography: (brand-family: 'Outfit', plain-family: 'Outfit'),
+  density: (scale: 0),
+));
+
+html {
+  @include mat.all-component-themes($light-theme);
+}
+
+html.dark-theme {
+  @include mat.all-component-themes($dark-theme);
+}
+
+// ─── Brand tokens ─────────────────────────────────────────────────────────────
+:root {
+  --r-yellow:  #EFDF00;
+  --r-black:   #1A1A1A;
+  --r-danger:  #D32F2F;
+  --r-success: #2E7D32;
+  --radius:    4px;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.12);
+
+  // Light palette
+  --r-bg:             #F4F4F4;
+  --r-surface:        #FFFFFF;
+  --r-surface-hover:  #FAFAFA;
+  --r-border:         #E8E8E8;
+  --r-text:           #1A1A1A;
+  --r-text-secondary: #757575;
+  --r-icon:           #1A1A1A;
+}
+
+html.dark-theme {
+  --r-bg:             #121212;
+  --r-surface:        #1E1E1E;
+  --r-surface-hover:  #252525;
+  --r-border:         #2E2E2E;
+  --r-text:           #F0F0F0;
+  --r-text-secondary: #9E9E9E;
+  --r-icon:           #F0F0F0;
+  --shadow-sm:        0 2px 8px rgba(0,0,0,0.35);
+  --shadow-md:        0 4px 20px rgba(0,0,0,0.5);
+}
+
+// ─── Reset / base ─────────────────────────────────────────────────────────────
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Outfit', sans-serif;
+  background: var(--r-bg);
+  color: var(--r-text);
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.25s, color 0.25s;
+}
+
+// ─── Toolbar ──────────────────────────────────────────────────────────────────
+.renault-toolbar {
+  background: var(--r-black) !important;
+  color: #ffffff !important;
+  height: 64px !important;
+  padding: 0 24px !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.5) !important;
+
+  .toolbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    text-decoration: none;
+
+    .toolbar-title {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+
+      .brand-name {
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #ffffff;
+      }
+
+      .brand-sub {
+        font-size: 10px;
+        font-weight: 400;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #757575;
+      }
+    }
+  }
+
+  .toolbar-divider {
+    width: 1px;
+    height: 28px;
+    background: rgba(255,255,255,0.15);
+    margin: 0 8px;
+  }
+
+  .toolbar-username {
+    font-size: 13px;
+    font-weight: 500;
+    color: #9E9E9E;
+    letter-spacing: 0.03em;
+  }
+
+  button[mat-icon-button] {
+    color: #ffffff !important;
+    transition: color 0.2s;
+    &:hover { color: var(--r-yellow) !important; }
+  }
+}
+
+// ─── Page layout ─────────────────────────────────────────────────────────────
+.page-container {
+  padding: 32px 40px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+
+  h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--r-text);
+  }
+}
+
+// ─── Cards ────────────────────────────────────────────────────────────────────
+mat-card, .mat-mdc-card {
+  background: var(--r-surface) !important;
+  color: var(--r-text) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: var(--shadow-sm) !important;
+  border: 1px solid var(--r-border) !important;
+  transition: background 0.25s, border-color 0.25s;
+}
+
+.mat-mdc-card-title  { color: var(--r-text) !important; }
+.mat-mdc-card-subtitle { color: var(--r-text-secondary) !important; }
+
+// ─── Tables ───────────────────────────────────────────────────────────────────
+.renault-table {
+  width: 100%;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--r-border);
+  background: var(--r-surface);
+  transition: background 0.25s, border-color 0.25s;
+
+  .mat-mdc-header-row { background: var(--r-black) !important; }
+
+  .mat-mdc-header-cell {
+    color: #ffffff !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.1em !important;
+    text-transform: uppercase !important;
+    border-bottom: none !important;
+  }
+
+  .mat-mdc-row {
+    background: var(--r-surface);
+    transition: background 0.15s;
+    &:hover { background: var(--r-surface-hover); }
+    &:not(:last-child) { border-bottom: 1px solid var(--r-border); }
+  }
+
+  .mat-mdc-cell {
+    font-size: 14px;
+    color: var(--r-text);
+    border-bottom: none !important;
+  }
+}
+
+// ─── Role badges ─────────────────────────────────────────────────────────────
+.role-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 2px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  &.role-admin {
+    background: var(--r-yellow);
+    color: var(--r-black);
+  }
+
+  &.role-user {
+    background: var(--r-border);
+    color: var(--r-text-secondary);
+  }
+}
+
+// ─── Primary buttons ─────────────────────────────────────────────────────────
+button.mat-mdc-raised-button[color="primary"] {
+  background-color: var(--r-yellow) !important;
+  color: var(--r-black) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.06em !important;
+  border-radius: var(--radius) !important;
+  box-shadow: none !important;
+
+  &:hover:not([disabled]) {
+    background-color: #d4c700 !important;
+    box-shadow: var(--shadow-sm) !important;
+  }
+  &[disabled] { opacity: 0.45 !important; }
+}
+
+button[color="warn"].mat-mdc-icon-button { color: var(--r-danger) !important; }
+
+// ─── Form fields ─────────────────────────────────────────────────────────────
+.mat-mdc-form-field {
+  font-family: 'Outfit', sans-serif !important;
+
+  .mat-mdc-text-field-wrapper {
+    background: var(--r-surface) !important;
+    transition: background 0.25s;
+  }
+
+  .mdc-floating-label,
+  .mat-mdc-input-element {
+    color: var(--r-text) !important;
+  }
+
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing {
+    border-color: var(--r-border) !important;
+  }
+}
+
+// ─── Dialogs ─────────────────────────────────────────────────────────────────
+.mat-mdc-dialog-container .mdc-dialog__surface {
+  background: var(--r-surface) !important;
+  color: var(--r-text) !important;
+  transition: background 0.25s;
+}
+
+.mat-mdc-dialog-title { color: var(--r-text) !important; }
+
+// ─── Detail tables (user-detail) ─────────────────────────────────────────────
+table td { color: var(--r-text); }
+
+// ─── Banners ─────────────────────────────────────────────────────────────────
+.error-banner {
+  background: #FFEBEE;
+  color: var(--r-danger);
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  border-left: 3px solid var(--r-danger);
+  font-size: 13px;
+}
+
+html.dark-theme .error-banner {
+  background: rgba(211,47,47,0.15);
+}
+
+.success-banner {
+  background: #E8F5E9;
+  color: var(--r-success);
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  border-left: 3px solid var(--r-success);
+  font-size: 13px;
+}
+
+html.dark-theme .success-banner {
+  background: rgba(46,125,50,0.15);
+}
+
+.spacer { flex: 1 1 auto; }
+
+// ─── User list toolbar (search + filters) ────────────────────────────────────
+.list-toolbar {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+
+  .search-field {
+    flex: 1;
+    min-width: 200px;
+    max-width: 360px;
+  }
+
+  .date-field {
+    width: 170px;
+    flex-shrink: 0;
+  }
+
+  .reset-btn {
+    flex-shrink: 0;
+    height: 56px;
+    color: var(--r-danger) !important;
+    border-color: var(--r-danger) !important;
+    font-size: 13px !important;
+    font-family: 'Outfit', sans-serif !important;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    mat-icon { font-size: 18px; width: 18px; height: 18px; }
+    &:hover { background: rgba(211,47,47,0.06) !important; }
+  }
+
+  .role-filters {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+    padding-top: 8px;
+  }
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--r-border);
+  background: var(--r-surface);
+  color: var(--r-text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+
+  &:hover { border-color: var(--r-yellow); color: var(--r-text); }
+
+  &.active {
+    border-color: var(--r-yellow);
+    background: var(--r-yellow);
+    color: var(--r-black);
+  }
+
+  // Audit action-specific active colors
+  &.audit-chip-USER_CREATED.active  { border-color: var(--r-success); background: var(--r-success); color: #fff; }
+  &.audit-chip-USER_UPDATED.active  { border-color: #1976D2; background: #1976D2; color: #fff; }
+  &.audit-chip-USER_DELETED.active  { border-color: var(--r-danger); background: var(--r-danger); color: #fff; }
+  &.audit-chip-PASSWORD_CHANGED.active { border-color: #F57C00; background: #F57C00; color: #fff; }
+}
+
+// ─── User dropdown panel ──────────────────────────────────────────────────────
+.user-dropdown.mat-mdc-menu-panel {
+  min-width: 220px !important;
+  border-radius: 8px !important;
+  background: var(--r-surface) !important;
+  border: 1px solid var(--r-border) !important;
+  box-shadow: var(--shadow-md) !important;
+  overflow: hidden;
+
+  .mat-mdc-menu-item {
+    color: var(--r-text) !important;
+    font-size: 14px !important;
+    font-family: 'Outfit', sans-serif !important;
+
+    .mat-icon { color: var(--r-text-secondary) !important; }
+
+    &:hover {
+      background: var(--r-surface-hover) !important;
+      .mat-icon { color: var(--r-text) !important; }
+    }
+  }
+
+  .menu-logout {
+    color: var(--r-danger) !important;
+    .mat-icon { color: var(--r-danger) !important; }
+  }
+
+  .mat-divider { border-color: var(--r-border) !important; }
+}
+
+// ─── Toolbar nav ─────────────────────────────────────────────────────────────
+.toolbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+a.nav-link {
+  color: rgba(255,255,255,0.65) !important;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.03em !important;
+  border-radius: 4px !important;
+  transition: color 0.2s, background 0.2s;
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+
+  &:hover { color: #ffffff !important; }
+
+  &.nav-link-active {
+    color: var(--r-yellow) !important;
+    background: rgba(239,223,0,0.08) !important;
+  }
+}
+
+// ─── Audit log table ──────────────────────────────────────────────────────────
+.audit-action {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  mat-icon { font-size: 20px; width: 20px; height: 20px; flex-shrink: 0; }
+}
+
+.audit-action-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.audit-username {
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--r-text);
+}
+
+// ─── Sortable column headers ──────────────────────────────────────────────────
+.sort-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 0;
+  font-family: 'Outfit', sans-serif;
+
+  &:hover { color: var(--r-yellow); }
+
+  .sort-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: rgba(255,255,255,0.35);
+    transition: color 0.2s;
+
+    &.active { color: var(--r-yellow); }
+  }
+}
