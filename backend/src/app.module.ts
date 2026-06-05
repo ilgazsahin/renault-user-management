@@ -21,7 +21,7 @@ import { Role } from './common/enums/role.enum';
           type: 'postgres' as const,
           host: configService.get<string>('DB_HOST', 'localhost'),
           port: parseInt(configService.get<string>('DB_PORT', '5432'), 10),
-          username: configService.get<string>('DB_USERNAME', 'ilgazsahin'),
+          username: configService.get<string>('DB_USERNAME', 'postgres'),
           password: password || undefined,
           database: configService.get<string>('DB_DATABASE', 'usermgmt'),
           entities: [User, AuditLog],
